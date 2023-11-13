@@ -74,7 +74,7 @@ const colors = (Name: string) => {
     case "Maghrib":
       return Name === "Maghrib" ? "#5B9A9A" : "#305252";
     case "Isha":
-      return Name === "Isha" ? "#5B9A9A" : "#305252";
+      return Name === "Isha" ? "#355A5A" : "#305252";
     default:
       return "#305252";
   }
@@ -91,7 +91,7 @@ export default function PieGraph() {
           data={data}
           cy="100%"
           outerRadius="100%"
-          fill="#8884d8"
+        
         >
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={colors(entry.name)} />

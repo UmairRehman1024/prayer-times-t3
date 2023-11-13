@@ -24,6 +24,9 @@ export default function Home() {
   //bg-[#305252]
   //  via-[#113f3c] via-60% 
 
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+
   return (
     <>
       <Head>
@@ -36,12 +39,12 @@ export default function Home() {
         {/* TODO add prayer icon */}
       </Head>
       <main className="h-screen w-screen bg-gradient-to-t from-[#051f1c] from-5%  to-[#4d8e86] to-95% font-open">
-        <div className="mx-5 flex flex-col  ">
-          <div className=" h-48 w-full">
+        <div className="mx-5 flex flex-col items-center lg:flex-row lg:justify-center  ">
+          <div className=" h-48 w-full lg:w-1/4">
             <PieGraph />
           </div>
 
-          <div className="flex flex-col items-center pt-10">
+          <div className="flex flex-col items-center pt-10 lg:w-1/4">
             <PrayerTime prayerType="Fajr" prayerTime={prayerTimes.fajr} />
             <PrayerTime prayerType="Dhuhr" prayerTime={prayerTimes.dhuhr} />
             <PrayerTime prayerType="Asr" prayerTime={prayerTimes.asr} />
