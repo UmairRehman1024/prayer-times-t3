@@ -2,8 +2,10 @@ import Head from "next/head";
 import Link from "next/link";
 import PieGraph from "~/components/PieChart";
 import Example from "~/components/PieChartNeedle";
+import { Redis } from '@upstash/redis'
 
 import { api } from "~/utils/api";
+
 
 export default function Home() {
   // const hello = api.post.hello.useQuery({ text: "from tRPC" });
