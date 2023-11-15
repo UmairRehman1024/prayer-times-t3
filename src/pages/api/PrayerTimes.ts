@@ -13,6 +13,14 @@ import { env } from "~/env.mjs";
 
 type ResponseData = {
   message: string;
+  data?: {
+    fajr: number;
+    sunrise: number;
+    dhuhr: number;
+    asr: number;
+    maghrib: number;
+    isha: number;
+  };
 };
 
 const redis = new Redis({
@@ -72,38 +80,46 @@ export default function handler(
     });
 
     const Prayers: any[] = [];
+    
 
     //update the redis database
     updatePrayerTimes(prayersMin)
       .then((value) => {
         if (value === undefined) {
+          console.log("value is undefined");
           return;
         }
+        console.log(value);
         Prayers.push(value[0]);
         Prayers.push(value[1]);
         Prayers.push(value[2]);
         Prayers.push(value[3]);
         Prayers.push(value[4]);
         Prayers.push(value[5]);
+
+        const results:ResponseData = {
+          message: "updated correctly",
+          data: {
+            fajr: Prayers[0],
+            sunrise: Prayers[1],
+            dhuhr: Prayers[2],
+            asr: Prayers[3],
+            maghrib: Prayers[4],
+            isha: Prayers[5],
+          }
+        };
+
+        res.status(200).json(results);
       })
 
       .catch((err) => {
         res.status(500).json({ message: err });
       });
 
-    const results = {
-      message: "updated correctly",
-      data: {
-        fajr: Prayers[0],
-        sunrise: Prayers[1],
-        dhuhr: Prayers[2],
-        asr: Prayers[3],
-        maghrib: Prayers[4],
-        isha: Prayers[5],
-      }
-    };
 
-    res.status(200).json(results);
+
+
+    
 
    
   });
