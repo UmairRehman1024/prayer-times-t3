@@ -1,64 +1,44 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import React from "react";
 import { ResponsiveContainer, PieChart, Pie, LabelList, Cell } from "recharts";
 
-328;
-// 5.28 - fajr
-452;
-// 7.32 - sunrise
-713;
-// 11.53 - dhuhr
-866;
-// 14.26 - asr
-979;
-// 16.19 - magrhib
-1098;
-// 18.18 - isha
-const data = [
-  { name: "beforeFajr", value: 328, additiveValue: 328 },
-  { name: "Fajr", value: 124, additiveValue: 452 },
-  { name: "beforeDhuhr", value: 261, additiveValue: 713 },
-  { name: "Dhuhr", value: 153, additiveValue: 866 },
-  { name: "Asr", value: 113, additiveValue: 979 },
-  { name: "Maghrib", value: 119, additiveValue: 1098 },
-  { name: "Isha", value: 342, additiveValue: 1440 },
-];
 
-const getCurrentSection = () => {
+
+const getCurrentSection = (data: number[]) => {
   const now = new Date();
   const current = now.getHours() * 60 + now.getMinutes();
 
+  //if data is undefined return error
   if (
-    data[0] === undefined ||
-    data[1] === undefined ||
-    data[2] === undefined ||
-    data[3] === undefined ||
-    data[4] === undefined ||
-    data[5] === undefined ||
-    data[6] === undefined
-  ) {
+    data?.[0] === undefined ||
+    data?.[1] === undefined ||
+    data?.[2] === undefined ||
+    data?.[3] === undefined ||
+    data?.[4] === undefined ||
+    data?.[5] === undefined
+  )
+    return "error";
+
+  if (current < data[0]) {
     return "beforeFajr";
-  } else if (current < data[0].additiveValue) {
-    return "beforeFajr";
-  } else if (current < data[1].additiveValue) {
+  } else if (current < data[1]) {
     return "Fajr";
-  } else if (current < data[2].additiveValue) {
+  } else if (current < data[2]) {
     return "beforeDhuhr";
-  } else if (current < data[3].additiveValue) {
+  } else if (current < data[3]) {
     return "Dhuhr";
-  } else if (current < data[4].additiveValue) {
+  } else if (current < data[4]) {
     return "Asr";
-  } else if (current < data[5].additiveValue) {
+  } else if (current < data[5]) {
     return "Maghrib";
-  } else if (current < data[6].additiveValue) {
+  } else {
     return "Isha";
   }
 };
 
-
 //current section is highlighted
-const colors = (Name: string) => {
-
-  const currentSection = getCurrentSection();
+const colors = (Name: string, data: number[]) => {
+  const currentSection = getCurrentSection(data);
 
   switch (currentSection) {
     case "beforeFajr":
@@ -75,12 +55,43 @@ const colors = (Name: string) => {
       return Name === "Maghrib" ? "#5B9A9A" : "#305252";
     case "Isha":
       return Name === "Isha" ? "#355A5A" : "#305252";
+    case "error":
+      //return red if data is undefined
+      return "#FF0000";
     default:
       return "#305252";
   }
 };
 
-export default function PieGraph() {
+export default function PieGraph({ data }: { data: number[] }) {
+
+  if (
+    data?.[0] === undefined ||
+    data?.[1] === undefined ||
+    data?.[2] === undefined ||
+    data?.[3] === undefined ||
+    data?.[4] === undefined ||
+    data?.[5] === undefined 
+
+  ) {
+    console.log("error ", data)
+    return <div>Something went wrong</div>;
+  }
+
+
+  //convert data into object for pie chart
+  const dataObject = [
+    { name: "beforeFajr", value: data[0] },
+    { name: "Fajr", value: data[1] - data[0] },
+    { name: "beforeDhuhr", value: data[2] - data[1] },
+    { name: "Dhuhr", value: data[3] - data[2] },
+    { name: "Asr", value: data[4] - data[3] },
+    { name: "Maghrib", value: data[5] - data[4] },
+    { name: "Isha", value: 1440 - data[5]  },
+  ];
+
+  console.log("dataObject ", dataObject)
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart>
@@ -88,15 +99,15 @@ export default function PieGraph() {
           dataKey="value"
           startAngle={180}
           endAngle={0}
-          data={data}
+          data={dataObject}
           cy="100%"
           outerRadius="100%"
-        
+          
         >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={colors(entry.name)} />
+          {dataObject.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={colors(entry.name, data)} />
           ))}
-          {/* <LabelList dataKey="name" position="inside" /> */}
+          {/* <LabelList dataKey="name" position="outside" /> */}
         </Pie>
       </PieChart>
     </ResponsiveContainer>

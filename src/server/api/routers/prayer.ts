@@ -1,41 +1,26 @@
+import { Redis } from "@upstash/redis";
 import { z } from "zod";
+import { env } from "~/env.mjs";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
+const redis = new Redis({
+  url: env.UPSTASH_REDIS_REST_URL,
+  token: env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 
 export const prayerRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
-
-  create: publicProcedure
-    .input(z.object({ name: z.string().min(1) }))
-    .mutation(async ({ ctx, input }) => {
-      // simulate a slow db call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      return ctx.db.post.create({
-        data: {
-          name: input.name,
-        },
-      });
-    }),
-
-  getLatest: publicProcedure.query(({ ctx }) => {
-    return ctx.db.post.findFirst({
-      orderBy: { createdAt: "desc" },
-    });
+  getPrayerTimes: publicProcedure.query(async () => {
+    const prayers: unknown[] = [];
+    await redis.get("fajr").then((value) => prayers.push(value));
+    await redis.get("sunrise").then((value) => prayers.push(value));
+    await redis.get("dhuhr").then((value) => prayers.push(value));
+    await redis.get("asr").then((value) => prayers.push(value));
+    await redis.get("maghrib").then((value) => prayers.push(value));
+    await redis.get("isha").then((value) => prayers.push(value));
+    return prayers as number[];
   }),
-  updatePrayerTimes: publicProcedure
-    .mutation(({ ctx }) => {
-        //get prayer time from web scaper
-        //update redis database
-        return 
-        }
-  
+
 });
+
