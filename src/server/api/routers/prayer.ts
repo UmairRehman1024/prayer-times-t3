@@ -1,5 +1,4 @@
 import { Redis } from "@upstash/redis";
-import { z } from "zod";
 import { env } from "~/env.mjs";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";

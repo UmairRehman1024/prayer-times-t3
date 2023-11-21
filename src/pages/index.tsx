@@ -80,8 +80,14 @@ function PrayerTime({
   );
 }
 
+
 function minutesToTime(minutes: number) {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  return `${hours}:${mins}`;
+  
+  // Pad minutes with leading zero if necessary
+  const paddedMins = mins < 10 ? `0${mins}` : mins;
+
+  return `${hours}:${paddedMins}`;
 }
+
